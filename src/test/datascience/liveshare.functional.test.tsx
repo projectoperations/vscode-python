@@ -23,8 +23,8 @@ import { IFileSystem } from '../../client/common/platform/types';
 import { createDeferred, Deferred } from '../../client/common/utils/async';
 import { Architecture } from '../../client/common/utils/platform';
 import { Commands } from '../../client/datascience/constants';
-import { HistoryMessageListener } from '../../client/datascience/historyMessageListener';
-import { HistoryMessages } from '../../client/datascience/historyTypes';
+import { HistoryMessageListener } from '../../client/datascience/history/historyMessageListener';
+import { HistoryMessages } from '../../client/datascience/history/historyTypes';
 import {
     ICodeWatcher,
     IDataScienceCommandListener,

@@ -48,7 +48,8 @@ Run the `Compile` and `Hygiene` build Tasks from the [Command Palette](https://c
 You can also compile from the command-line. For a full compile you can use `npx gulp prePublishNonBundle`. For incremental builds you can use the following commands depending on your needs:
 ```shell
 npm run compile
-npm run compile-webviews-watch # For data science (React Code)
+npm run compile-history-watch # For data science (React Code)
+npm run compile-dataexplorer-watch # For data science (React Code)
 ```
 
 Sometimes you will need to run `npm run clean` and even `rm -r out`.

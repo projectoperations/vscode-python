@@ -25,9 +25,20 @@
             }
         },
         {
-            "label": "Compile Web Views",
+            "label": "Compile History",
             "type": "npm",
-            "script": "compile-webviews-watch",
+            "script": "compile-history-watch",
+            "isBackground": true,
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Compile DataExplorer",
+            "type": "npm",
+            "script": "compile-dataexplorer-watch",
             "isBackground": true,
             "group": {
                 "kind": "build",

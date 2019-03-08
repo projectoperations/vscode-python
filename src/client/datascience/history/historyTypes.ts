@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 'use strict';
 
-import { ICell, IHistoryInfo } from './types';
+import { ICell, IHistoryInfo } from '../types';
 
 export namespace HistoryMessages {
     export const StartCell = 'start_cell';

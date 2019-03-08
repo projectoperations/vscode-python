@@ -8,7 +8,7 @@ import * as React from 'react';
 
 import { CellMatcher } from '../../client/datascience/cellMatcher';
 import { generateMarkdownFromCodeLines } from '../../client/datascience/common';
-import { HistoryMessages, IHistoryMapping } from '../../client/datascience/historyTypes';
+import { HistoryMessages, IHistoryMapping } from '../../client/datascience/history/historyTypes';
 import { CellState, ICell, IHistoryInfo } from '../../client/datascience/types';
 import { ErrorBoundary } from '../react-common/errorBoundary';
 import { getLocString } from '../react-common/locReactSide';
@@ -29,13 +29,15 @@ export interface IMainPanelProps {
     codeTheme: string;
 }
 
+class HistoryPostOffice extends PostOffice<IHistoryMapping> {};
+
 export class MainPanel extends React.Component<IMainPanelProps, IMainPanelState> implements IMessageHandler {
     private stackLimit = 10;
     private bottom: HTMLDivElement | undefined;
     private updateCount = 0;
     private renderCount = 0;
     private sentStartup = false;
-    private postOffice: PostOffice | undefined;
+    private postOffice: HistoryPostOffice | undefined;
 
     // tslint:disable-next-line:max-func-body-length
     constructor(props: IMainPanelProps, state: IMainPanelState) {
@@ -80,7 +82,7 @@ export class MainPanel extends React.Component<IMainPanelProps, IMainPanelState>
 
         return (
             <div className='main-panel'>
-                <PostOffice messageHandlers={[this]} ref={this.updatePostOffice} />
+                <HistoryPostOffice messageHandlers={[this]} ref={this.updatePostOffice} />
                 <MenuBar baseTheme={this.props.baseTheme} stylePosition='top-fixed'>
                     {this.renderExtraButtons()}
                     <CellButton baseTheme={this.props.baseTheme} onClick={this.collapseAll} disabled={!this.canCollapseAll()} tooltip={getLocString('DataScience.collapseAll', 'Collapse all cell inputs')}>
@@ -412,7 +414,7 @@ export class MainPanel extends React.Component<IMainPanelProps, IMainPanelState>
         }
     }
 
-    private updatePostOffice = (postOffice: PostOffice) => {
+    private updatePostOffice = (postOffice: HistoryPostOffice) => {
         if (this.postOffice !== postOffice) {
             this.postOffice = postOffice;
             if (!this.sentStartup) {
