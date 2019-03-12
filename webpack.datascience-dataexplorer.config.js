@@ -1,7 +1,8 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const FixDefaultImportPlugin = require('webpack-fix-default-import-plugin');
 const path = require('path');
-const CopyWebpackPlugin = require('copy-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const webpack = require('webpack');
 
 const configFileName = 'tsconfig.datascience-ui.json';
 
@@ -30,6 +31,11 @@ module.exports = {
             { from: './**/*.css', to: '.' },
             { from: './**/*theme*.json', to: '.' }
         ], { context: 'src' }),
+        new webpack.DefinePlugin({
+            "process.env": { 
+               NODE_ENV: JSON.stringify("production") 
+             }
+          })        
     ],
     resolve: {
         // Add '.ts' and '.tsx' as resolvable extensions.
