@@ -190,5 +190,33 @@ z = np.array([drumhead_height(1, 1, r, theta, 0.5) for r in radius])`;
         expect(Reporter.properties).to.deep.equal([{ import: 'scipy' }]);
     });
 
+    test('function', () => {
+        const code = `
+def drumhead_height(n, k, distance, angle, t):
+   import sklearn as sk
+   return np.cos(t) * np.cos(n*angle) * special.jn(n, distance*kth_zero)
+theta = np.r_[0:2*np.pi:50j]
+radius = np.r_[0:1:50j]
+x = np.array([r * np.cos(theta) for r in radius])
+y = np.array([r * np.sin(theta) for r in radius])
+z = np.array([drumhead_height(1, 1, r, theta, 0.5) for r in radius])`;
+        historyEventEmitter.fire(code);
+        expect(Reporter.properties).to.deep.equal([{ import: 'sklearn' }]);
+    });
+
+    test('Comma separated', () => {
+        const code = `
+def drumhead_height(n, k, distance, angle, t):
+   import sklearn, pandas
+   return np.cos(t) * np.cos(n*angle) * special.jn(n, distance*kth_zero)
+theta = np.r_[0:2*np.pi:50j]
+radius = np.r_[0:1:50j]
+x = np.array([r * np.cos(theta) for r in radius])
+y = np.array([r * np.sin(theta) for r in radius])
+z = np.array([drumhead_height(1, 1, r, theta, 0.5) for r in radius])`;
+        historyEventEmitter.fire(code);
+        expect(Reporter.properties).to.deep.equal([{ import: 'sklearn' }, { import: 'pandas' }]);
+    });
+
     // That's probably enough different variants of code to verify nothing is wonky.
 });

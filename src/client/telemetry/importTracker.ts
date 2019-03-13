@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 'use strict';
-
 import '../common/extensions';
 
 import { inject, injectable } from 'inversify';
+import * as path from 'path';
 import { TextDocument } from 'vscode';
 
 import { sendTelemetryEvent } from '.';
@@ -14,7 +14,8 @@ import { ICodeExecutionManager } from '../terminals/types';
 import { EventName, KnownImports } from './constants';
 import { IImportTracker } from './types';
 
-const ImportRegEx = /^(?!['"#]).*from\s+([a-zA-Z0-9_\.]+)\s+import.*(?!['"])|^(?!['"#]).*import\s+(\w+).*(?!['"])/;
+const ImportRegEx = /^(?!['"#]).*from\s+([a-zA-Z0-9_\.]+)\s+import.*(?!['"])|^(?!['"#]).*import\s+([a-zA-Z0-9_\., ]+).*(?!['"])/;
+const MAX_DOCUMENT_LINES = 1000;
 
 @injectable()
 export class ImportTracker implements IImportTracker {
@@ -35,7 +36,7 @@ export class ImportTracker implements IImportTracker {
                 matchString += `${val}|`;
             }
         });
-        this.knownImportsMatch = new RegExp(matchString.slice(0, matchString.length - 1));
+        this.knownImportsMatch = new RegExp(matchString.slice(0, matchString.length - 1), 'g');
 
         // Sign up for document open/save events so we can track known imports
         this.documentManager.onDidOpenTextDocument((t) => this.onOpenedOrSavedDocument(t));
@@ -56,9 +57,13 @@ export class ImportTracker implements IImportTracker {
     }
 
     private onOpenedOrSavedDocument(document: TextDocument) {
-        // Parse the contents of the document, looking for import matches on each line
-        const lines = document.getText().splitLines({ trim: true, removeEmptyEntries: true });
-        this.lookForImports(lines, EventName.KNOWN_IMPORT_FROM_FILE);
+        // Make sure this is a python file.
+        if (path.extname(document.fileName) === '.py')
+        {
+            // Parse the contents of the document, looking for import matches on each line
+            const lines = document.getText().splitLines({ trim: true, removeEmptyEntries: true });
+            this.lookForImports(lines.slice(0, Math.min(lines.length, MAX_DOCUMENT_LINES)), EventName.KNOWN_IMPORT_FROM_FILE);
+        }
     }
 
     private onExecutedCode(code: string) {
@@ -76,14 +81,19 @@ export class ImportTracker implements IImportTracker {
                 const actual = match[1] ? match[1] : match[2];
 
                 // See if this matches any known imports
-                const knownMatch = this.knownImportsMatch.exec(actual);
-                if (knownMatch) {
-                    const val = knownMatch[0]; // Use this is we switch to the enum => KnownImports[knownMatch[0]];
-                    // Skip if already sent this telemetry
-                    if (!this.sentMatches.has(val)) {
-                        matches.add(val);
-                    }
+                let knownMatch: RegExpExecArray = this.knownImportsMatch.exec(actual);
+                while (knownMatch) {
+                    knownMatch.forEach(val => {
+                        // Skip if already sent this telemetry
+                        if (!this.sentMatches.has(val)) {
+                            matches.add(val);
+                        }
+                    });
+                    knownMatch = this.knownImportsMatch.exec(actual);
                 }
+
+                // Reset search.
+                this.knownImportsMatch.lastIndex = 0;
             }
         }
 

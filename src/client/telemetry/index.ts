@@ -6,9 +6,7 @@ import { basename as pathBasename, sep as pathSep } from 'path';
 import * as stackTrace from 'stack-trace';
 import TelemetryReporter from 'vscode-extension-telemetry';
 
-import { noop } from '../../test/core';
 import { EXTENSION_ROOT_DIR, isTestExecution, PVSC_EXTENSION_ID } from '../common/constants';
-import { traceInfo } from '../common/logger';
 import { StopWatch } from '../common/utils/stopWatch';
 import { Telemetry } from '../datascience/constants';
 import { EventName } from './constants';
@@ -112,11 +110,13 @@ export function sendTelemetryEvent<P extends IEventNamePropertyMapping, E extend
         reporter.sendTelemetryEvent('ERROR', customProperties, measures);
     }
     reporter.sendTelemetryEvent((eventName as any) as string, customProperties, measures);
-    try {
-        traceInfo(`Telemetry: ${eventName} : ${JSON.stringify(customProperties)}`);
-    } catch {
-        noop();
-    }
+
+    // Enable this to debug telemetry. To be discussed whether or not we want this all of the time.
+    // try {
+    //     traceInfo(`Telemetry: ${eventName} : ${JSON.stringify(customProperties)}`);
+    // } catch {
+    //     noop();
+    // }
 }
 
 // tslint:disable-next-line:no-any function-name
