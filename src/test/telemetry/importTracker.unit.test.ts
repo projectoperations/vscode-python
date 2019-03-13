@@ -10,7 +10,7 @@ import { EventEmitter, TextDocument } from 'vscode';
 
 import { IDocumentManager } from '../../client/common/application/types';
 import { IHistoryProvider } from '../../client/datascience/types';
-import { EventName } from '../../client/telemetry/constants';
+import { EventName } from '../../client/telemetry/constants'; 
 import { ImportTracker } from '../../client/telemetry/importTracker';
 import { ICodeExecutionManager } from '../../client/terminals/types';
 import { createDocument } from '../datascience/editor-integration/helpers';

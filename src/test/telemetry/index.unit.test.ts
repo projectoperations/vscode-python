@@ -1,14 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
-
 'use strict';
 
 //tslint:disable:max-func-body-length match-default-export-name no-any
-
 import { expect } from 'chai';
 import rewiremock from 'rewiremock';
+
 import { EXTENSION_ROOT_DIR } from '../../client/constants';
-import { sendTelemetryEvent, clearTelemetryReporter } from '../../client/telemetry';
+import { clearTelemetryReporter, sendTelemetryEvent } from '../../client/telemetry';
 import { correctPathForOsType } from '../common';
 
 suite('Telemetry', () => {
@@ -24,7 +23,7 @@ suite('Telemetry', () => {
         process.env.VSC_PYTHON_CI_TEST = oldValueOfVSC_PYTHON_CI_TEST;
         rewiremock.disable();
     });
-    
+
     class Reporter {
         public static eventName: string;
         public static properties: Record<string, string>;
