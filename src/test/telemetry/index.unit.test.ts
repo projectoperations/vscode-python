@@ -8,7 +8,7 @@
 import { expect } from 'chai';
 import rewiremock from 'rewiremock';
 import { EXTENSION_ROOT_DIR } from '../../client/constants';
-import { sendTelemetryEvent } from '../../client/telemetry';
+import { sendTelemetryEvent, clearTelemetryReporter } from '../../client/telemetry';
 import { correctPathForOsType } from '../common';
 
 suite('Telemetry', () => {
@@ -17,13 +17,14 @@ suite('Telemetry', () => {
     setup(() => {
         process.env.VSC_PYTHON_UNIT_TEST = undefined;
         process.env.VSC_PYTHON_CI_TEST = undefined;
+        clearTelemetryReporter();
     });
     teardown(() => {
         process.env.VSC_PYTHON_UNIT_TEST = oldValueOfVSC_PYTHON_UNIT_TEST;
         process.env.VSC_PYTHON_CI_TEST = oldValueOfVSC_PYTHON_CI_TEST;
         rewiremock.disable();
     });
-
+    
     class Reporter {
         public static eventName: string;
         public static properties: Record<string, string>;

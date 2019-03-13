@@ -55,7 +55,7 @@ function isTelemetrySupported(): boolean {
         return false;
     }
 }
-let telemetryReporter: TelemetryReporter;
+let telemetryReporter: TelemetryReporter | undefined;
 function getTelemetryReporter() {
     if (!isTestExecution() && telemetryReporter) {
         return telemetryReporter;
@@ -73,6 +73,10 @@ function getTelemetryReporter() {
     // tslint:disable-next-line:no-require-imports
     const reporter = require('vscode-extension-telemetry').default as typeof TelemetryReporter;
     return (telemetryReporter = new reporter(extensionId, extensionVersion, aiKey));
+}
+
+export function clearTelemetryReporter() {
+    telemetryReporter = undefined;
 }
 
 export function sendTelemetryEvent<P extends IEventNamePropertyMapping, E extends keyof P>(
